@@ -1,0 +1,41 @@
+FROM amazonlinux:latest
+MAINTAINER Levon Becker "supercalifragilisticexpialidocious@bonusbits.com"
+LABEL version="2.1.10" \
+      description="Amazon Linux Image built using Chef Zero Example." \
+      github="https://github.com/bonusbits/cookbook_name" \
+      website="https://www.bonusbits.com"
+
+# Build Cookbook Args
+# Chef Client v12.21.4
+ARG chefdk_version=1.6.1
+ARG cookbook_name=setup_nodeapp
+ARG chef_role=role
+ARG chef_environment=environment
+ARG chef_config_path=/opt/chef-repo
+
+# Install Bootstrap Packages
+RUN yum clean all
+RUN yum update -y --exclude=kernel*
+RUN yum install -y git htop mlocate net-tools openssh-client openssh-server procps upstart util-linux vim-enhanced which
+
+# Install ChefDK
+RUN curl -L https://omnitruck.chef.io/install.sh | bash -s -- -P chefdk -v ${chefdk_version}
+
+# Setup Chef Client
+RUN mkdir -p ${chef_config_path}
+WORKDIR ${chef_config_path}
+RUN mkdir -p cookbooks checksums environments cache backup data_bags roles
+RUN mkdir cookbooks/${cookbook_name}
+COPY . cookbooks/${cookbook_name}/
+COPY test/roles/* roles/
+COPY test/environments/* environments/
+COPY test/data_bags/* data_bags/
+COPY test/node/client.rb ${chef_config_path}/client.rb
+
+# Download Dependant Cookbooks
+WORKDIR ${chef_config_path}/cookbooks/${cookbook_name}
+RUN /opt/chefdk/bin/berks install
+RUN /opt/chefdk/bin/berks vendor ${chef_config_path}/cookbooks/
+
+# Run Chef
+RUN /opt/chefdk/bin/chef-client -z --config ${chef_config_path}/client.rb -o "role[${chef_role}]" --environment "${chef_environment}" --log_level info --force-formatter --chef-zero-port 8889
