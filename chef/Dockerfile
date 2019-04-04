@@ -23,6 +23,6 @@ RUN curl -O "${chef_url}"  && \
 	dpkg -i "${chef_file}" && \
 	rm "${chef_file}"
 
-CMD ["chef-server-ctl", "reconfigure"]
+CMD ["chef-server-ctl reconfigure"]
 
 # docker run -it -p 443:443 --name chef-server dfernando/ubuntu1604:chef bash

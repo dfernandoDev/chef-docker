@@ -23,7 +23,7 @@ WORKDIR /home/dinesh
 
 #RUN wget --no-check-certificate https://packages.chef.io/files/stable/chefdk/3.8.14/ubuntu/16.04/chefdk_3.8.14-1_amd64.deb
 
-RUN wget --no-check-certificate "${chef_url}" && \
+RUN curl -O "${chef_url}" && \
 	chown -R dinesh:dinesh /home/dinesh && \
     dpkg -i "${chef_file}" && \
     rm "${chef_file}"
