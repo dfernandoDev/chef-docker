@@ -1,4 +1,4 @@
-# docker image build -t dfernando/ubuntu1604:chef .
+# docker image build -t --rm dfernando/ubuntu1604:chef .
 
 FROM ubuntu:16.04
 
