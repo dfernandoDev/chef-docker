@@ -1,4 +1,5 @@
-# docker image build -t --rm dfernando/ubuntu1604:chefdk .
+# docker image build -t dfernando/ubuntu1604:chefdk .
+# docker image build --rm=true --no-cache -t dfernando/ubuntu1604:chefdk .
 
 FROM ubuntu:16.04
 

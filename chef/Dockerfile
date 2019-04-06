@@ -1,4 +1,5 @@
-# docker image build -t --rm dfernando/ubuntu1604:chef .
+# docker image build -t dfernando/ubuntu1604:chef .
+# docker image build --rm=true --no-cache -t dfernando/ubuntu1604:chef .
 
 FROM ubuntu:16.04
 
@@ -14,7 +15,7 @@ ARG chef_url=https://packages.chef.io/files/stable/chef-server/12.19.31/ubuntu/1
 
 RUN apt-get clean all && \
 	apt-get update && \
-	apt-get install -y curl git htop mlocate net-tools openssh-client openssh-server procps upstart util-linux && \
+	apt-get install -y curl git htop mlocate net-tools openssh-client openssh-server procps upstart util-linux ntp && \
 	rm -rf /var/lib/apt/lists/*
 
 WORKDIR /root
@@ -23,6 +24,7 @@ RUN curl -O "${chef_url}"  && \
 	dpkg -i "${chef_file}" && \
 	rm "${chef_file}"
 
-CMD ["chef-server-ctl reconfigure"]
+#CMD chef-server-ctl reconfigure
 
-# docker run -it -p 443:443 --name chef-server dfernando/ubuntu1604:chef bash
+# docker run -it -p 443:443 --name chef-server --hostname chef-server.dfernando.com dfernando/ubuntu1604:chef bash
+# docker run -d -p 443:443 --name chef-server --hostname chef-server.dfernando.com dfernando/ubuntu1604:chef
